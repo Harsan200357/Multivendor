@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Categories - EMarket Admin')}">
+</head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="max-w-7xl mx-auto px-8 py-10 animate-in">
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
+            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">📁 Categories</h2>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 max-w-lg">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Add Category</h3>
+            <form th:action="@{/admin/categories/add}" method="post" class="flex gap-3">
+                <input type="text" name="name" placeholder="Category name" required
+                    class="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all text-sm">
+                <button type="submit"
+                    class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-emerald-500/20 transition-all duration-200 text-sm">Add</button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                            <th class="p-4 pl-6">ID</th>
+                            <th class="p-4">Name</th>
+                            <th class="p-4 pr-6">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr th:each="cat : ${categories}" class="hover:bg-gray-50 transition-colors">
+                            <td class="p-4 pl-6 text-gray-500 font-mono text-sm" th:text="${cat.id}">1</td>
+                            <td class="p-4 text-gray-900 font-bold" th:text="${cat.name}">Category</td>
+                            <td class="p-4 pr-6">
+                                <form th:action="@{/admin/categories/delete/{id}(id=${cat.id})}" method="post"
+                                    class="inline">
+                                    <button type="submit"
+                                        class="bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-sm px-3 py-1.5 rounded-lg transition-colors">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+
+</html>

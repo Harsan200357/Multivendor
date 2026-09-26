@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('All Orders - EMarket Admin')}">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="max-w-7xl mx-auto px-8 py-10 animate-in">
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200">
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">📋 All Orders</h2>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(orders)}" class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="p-4 pl-6">Order #</th>
+                        <th class="p-4">Customer</th>
+                        <th class="p-4">Date</th>
+                        <th class="p-4">Items</th>
+                        <th class="p-4">Total</th>
+                        <th class="p-4 pr-6">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    <tr th:each="order : ${orders}" class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4 pl-6 text-gray-900 font-bold" th:text="'#' + ${order.id}">ID</td>
+                        <td class="p-4 text-gray-700 font-medium" th:text="${order.user.username}">Customer</td>
+                        <td class="p-4 text-gray-500" th:text="${#temporals.format(order.createdAt, 'MMM dd, yyyy')}">Date</td>
+                        <td class="p-4 text-gray-700" th:text="${#lists.size(order.orderItems)}">0</td>
+                        <td class="p-4 text-emerald-600 font-extrabold" th:text="'LKR ' + ${order.totalAmount}">$0</td>
+                        <td class="p-4 pr-6">
+                            <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full"
+                                  th:classappend="${order.status == 'DELIVERED' ? 'bg-emerald-100 text-emerald-700' : (order.status == 'PENDING' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700')}"
+                                  th:text="${order.status}">PENDING</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="text-center py-24 bg-white rounded-2xl border border-dashed border-gray-200 mt-8">
+        <div class="text-6xl mb-4">📋</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">No orders yet</h3>
+        <p class="text-gray-500">Orders from all users will appear here.</p>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

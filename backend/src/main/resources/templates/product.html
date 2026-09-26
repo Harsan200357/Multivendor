@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Product Details - EMarket')}">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="max-w-6xl mx-auto px-8 py-10 animate-in">
+    <a href="/products" class="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 px-4 py-2 rounded-md mb-6 transition-colors shadow-sm">&larr; Back to Products</a>
+    
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex flex-col md:flex-row gap-10">
+        <div class="flex-1 md:max-w-md lg:max-w-lg aspect-square flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden border border-gray-100 relative">
+            <img th:if="${product.imageUrls != null and !#lists.isEmpty(product.imageUrls)}" th:src="${product.imageUrls[0]}" alt="Product Image" class="w-full h-full object-cover">
+            <span th:unless="${product.imageUrls != null and !#lists.isEmpty(product.imageUrls)}" class="text-8xl opacity-30">📦</span>
+        </div>
+        <div class="flex-1 flex flex-col">
+            <h1 th:text="${product.name}" class="text-3xl font-extrabold text-gray-900 mb-2">Product Name</h1>
+            <div th:text="'LKR ' + ${product.price}" class="text-2xl font-bold text-emerald-600 mb-6">Price</div>
+            
+            <p th:text="${product.description}" class="text-gray-600 text-lg leading-relaxed mb-6">Description</p>
+            
+            <div class="flex flex-wrap gap-4 text-sm font-medium text-gray-500 mb-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <span th:if="${product.category != null}" class="flex items-center gap-1.5"><span class="text-lg">📂</span> <span th:text="${product.category.name}">Category</span></span>
+                <span class="flex items-center gap-1.5"><span class="text-lg">📦</span> Stock: <span th:text="${product.stockQuantity}" class="text-gray-900">0</span></span>
+                <span class="flex items-center gap-1.5"><span class="text-lg">⭐</span> Reviews: <span th:text="${product.noOfReviews}" class="text-gray-900">0</span></span>
+            </div>
+
+            <div th:if="${product.seller != null}" class="mb-8">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Sold by</h4>
+                <div th:text="${product.seller.username}" class="text-lg font-semibold text-gray-900">Seller Name</div>
+            </div>
+
+            <div th:if="${product.sizes != null and !#lists.isEmpty(product.sizes)}" class="mb-6">
+                <label for="sizeSelect" class="block text-sm font-semibold text-gray-700 mb-2">Select Size</label>
+                <select id="sizeSelect" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                    <option th:each="size : ${product.sizes}" th:value="${size}" th:text="${size}"></option>
+                </select>
+            </div>
+
+            <div class="mt-auto flex gap-4 pt-4 border-t border-gray-100">
+                <input type="number" id="quantity" value="1" min="1" max="100" class="w-24 text-center text-lg font-bold bg-gray-50 border border-gray-200 rounded-xl focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors">
+                <button th:onclick="'addToCart(' + ${product.id} + ', document.getElementById(\'quantity\').value, document.getElementById(\'sizeSelect\') ? document.getElementById(\'sizeSelect\').value : null)'" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-bold py-4 rounded-xl shadow-md shadow-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all duration-200">🛒 Add to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="mt-12 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Customer Reviews</h2>
+        
+        <div th:if="${#lists.isEmpty(reviews)}" class="text-gray-500 italic mb-8">
+            No reviews yet. Be the first to review this product!
+        </div>
+
+        <div th:if="${not #lists.isEmpty(reviews)}" class="space-y-6 mb-8">
+            <div th:each="review : ${reviews}" class="p-6 bg-gray-50 rounded-xl border border-gray-100">
+                <div class="flex justify-between items-center mb-3">
+                    <strong th:text="${review.user.username}" class="text-gray-900 font-semibold">User</strong>
+                    <span class="text-amber-400 tracking-widest text-sm" th:text="${'⭐'.repeat(review.rating)}">⭐⭐⭐⭐⭐</span>
+                </div>
+                <p th:text="${review.comment}" class="text-gray-600">Comment</p>
+            </div>
+        </div>
+
+        <!-- Add Review Form -->
+        <div sec:authorize="isAuthenticated()" class="mt-10 pt-8 border-t border-gray-200">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">Write a Review</h3>
+            <form th:action="@{/products/{id}/review(id=${product.id})}" method="post" class="max-w-xl space-y-5">
+                <div>
+                    <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">Rating (1-5)</label>
+                    <input type="number" id="rating" name="rating" min="1" max="5" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors">
+                </div>
+                <div>
+                    <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Review Comment</label>
+                    <textarea id="comment" name="comment" rows="4" required class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors resize-y"></textarea>
+                </div>
+                <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg shadow-sm transition-colors">Submit Review</button>
+            </form>
+        </div>
+        <div sec:authorize="!isAuthenticated()" class="mt-8 pt-8 border-t border-gray-200">
+            <p class="text-gray-600"><a href="/login" class="text-emerald-600 hover:text-emerald-700 font-semibold underline decoration-2 underline-offset-4">Log in</a> to write a review.</p>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

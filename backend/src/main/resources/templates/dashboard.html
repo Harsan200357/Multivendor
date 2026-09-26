@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Dashboard - EMarket')}">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="max-w-7xl mx-auto px-8 py-10 animate-in">
+    <div class="flex items-center justify-between mb-10 pb-6 border-b border-gray-200">
+        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">👋 Hello, <span th:text="${user.username}" class="text-emerald-600">User</span>!</h2>
+        <span class="px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full shadow-sm"
+              th:classappend="${user.role.name() == 'ADMIN' ? 'bg-purple-100 text-purple-700' : (user.role.name() == 'SELLER' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700')}"
+              th:text="${user.role}">ROLE</span>
+    </div>
+
+    <!-- User Dashboard -->
+    <div th:if="${user.role.name() == 'USER'}" class="space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${orderCount}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Orders</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${cartCount}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Items in Cart</div>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-4">
+            <a href="/products" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl shadow-sm shadow-emerald-500/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">🛍️ Browse Products</a>
+            <a href="/cart" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 px-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">🛒 View Cart</a>
+            <a href="/orders" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 px-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">📦 My Orders</a>
+        </div>
+    </div>
+
+    <!-- Seller Dashboard -->
+    <div th:if="${user.role.name() == 'SELLER'}" class="space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${productCount}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">My Products</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${sellerOrderCount}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Orders Received</div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Products Ordered Over Past 7 Days</h3>
+            <div class="relative h-72 w-full">
+                <canvas id="sellerChart"></canvas>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4 mt-6">
+            <a href="/seller/products" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl shadow-sm shadow-emerald-500/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">📦 Manage Products</a>
+            <a href="/seller/add-product" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 px-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">➕ Add Product</a>
+            <a href="/seller/orders" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 px-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">📋 View Orders</a>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div th:if="${user.role.name() == 'ADMIN'}" class="space-y-8">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${totalUsers}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Users</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${totalProducts}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Products</div>
+            </div>
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                <div class="text-4xl font-black text-gray-900 mb-2" th:text="${totalOrders}">0</div>
+                <div class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Orders</div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mt-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Orders Over Past 7 Days</h3>
+            <div class="relative h-72 w-full">
+                <canvas id="adminChart"></canvas>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4 mt-6">
+            <a href="/admin/users" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-xl shadow-sm shadow-emerald-500/20 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">👥 Manage Users</a>
+            <a href="/admin/categories" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 px-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">📁 Categories</a>
+            <a href="/admin/orders" class="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 font-bold py-3 px-6 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">📋 All Orders</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script th:src="@{/js/app.js}"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        const userRole = /*[[${user.role.name()}]]*/ 'USER';
+
+        if (userRole === 'ADMIN') {
+            fetch('/api/dashboard/admin/chart')
+                .then(res => res.json())
+                .then(data => {
+                    const ctx = document.getElementById('adminChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.map(d => d.date),
+                            datasets: [{
+                                label: 'Orders',
+                                data: data.map(d => d.count),
+                                borderColor: '#10B981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                });
+        }
+
+        if (userRole === 'SELLER') {
+            fetch('/api/dashboard/seller/chart')
+                .then(res => res.json())
+                .then(data => {
+                    const ctx = document.getElementById('sellerChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.map(d => d.date),
+                            datasets: [{
+                                label: 'Products Ordered',
+                                data: data.map(d => d.count),
+                                backgroundColor: '#10B981',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                });
+        }
+    });
+</script>
+</body>
+</html>

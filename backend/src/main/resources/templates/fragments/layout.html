@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">EMarket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+<nav th:fragment="navbar" class="bg-white/95 backdrop-blur-md border-b border-gray-200 px-8 h-16 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-8 flex-1">
+        <a href="/" class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-indigo-500 tracking-tight">⚡ EMarket</a>
+        <!-- Navbar Search -->
+        <form th:action="@{/products}" method="get" class="hidden md:flex items-center gap-2 flex-1 max-w-2xl">
+            <input type="text" name="query" th:value="${query}" class="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block w-full p-2 outline-none transition-colors" placeholder="Search...">
+            <select name="categoryId" th:if="${categories != null}" class="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg p-2 w-40 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors">
+                <option value="">All Categories</option>
+                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:selected="${categoryId == cat.id}"></option>
+            </select>
+            <input type="number" name="maxPrice" th:value="${maxPrice}" class="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 w-24 p-2 outline-none transition-colors" placeholder="Max LKR" step="10" min="0">
+            <select name="sort" class="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg p-2 w-32 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-colors">
+                <option value="">Sort By</option>
+                <option value="price_asc" th:selected="${sort == 'price_asc'}">Price: Low to High</option>
+                <option value="price_desc" th:selected="${sort == 'price_desc'}">Price: High to Low</option>
+                <option value="newest" th:selected="${sort == 'newest'}">Newest</option>
+            </select>
+            <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg text-sm px-3 py-2 transition-colors">🔍</button>
+        </form>
+    </div>
+    <div class="flex items-center gap-2">
+        <a href="/" class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md font-medium text-sm transition-colors">Home</a>
+        <a href="/products" class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md font-medium text-sm transition-colors">Products</a>
+        <a th:if="${currentRole == 'USER'}" href="/cart" class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md font-medium text-sm transition-colors">🛒 Cart</a>
+        <a th:if="${currentRole == 'SELLER'}" href="/seller/products" class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md font-medium text-sm transition-colors">My Products</a>
+        <a th:if="${isLoggedIn}" href="/dashboard" th:text="${currentUser}" class="text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md font-medium text-sm transition-colors">Profile</a>
+        <a th:if="${!isLoggedIn}" href="/login" class="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-emerald-500/20 text-white px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200">Login</a>
+        <button th:if="${isLoggedIn}" onclick="logout()" class="border border-gray-200 text-gray-700 hover:bg-gray-50 hover:-translate-y-0.5 px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200">Logout</button>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Products - EMarket')}">
+</head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="max-w-7xl mx-auto px-8 py-10 animate-in">
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 tracking-tight">🛍️ All Products</h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div th:each="product : ${products}" class="bg-white rounded-xl shadow-sm hover:shadow-xl border border-gray-100 hover:border-emerald-200 transition-all duration-300 flex flex-col overflow-hidden animate-in group">
+            <div class="h-56 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
+                <img th:if="${product.imageUrls != null and !#lists.isEmpty(product.imageUrls)}" th:src="${product.imageUrls[0]}" alt="Product Image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <span th:unless="${product.imageUrls != null and !#lists.isEmpty(product.imageUrls)}" class="text-5xl opacity-50">📦</span>
+            </div>
+            <div class="p-5 flex-1 flex flex-col">
+                <div class="text-lg font-bold text-gray-900 mb-1" th:text="${product.name}">Product Name</div>
+                <div class="text-sm text-gray-500 mb-4 line-clamp-2 flex-1" th:text="${product.description}">Description here</div>
+                <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                    <span class="text-xl font-extrabold text-emerald-600" th:text="'LKR ' + ${product.price}">$0.00</span>
+                    <button th:onclick="'addToCart(' + ${product.id} + ')'" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold shadow-sm shadow-emerald-500/30 transition-all duration-200">🛒 Add</button>
+                </div>
+                <div class="text-xs text-gray-400 mt-3 font-medium" th:if="${product.seller != null}" th:text="'by ' + ${product.seller.username}">by seller</div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:if="${#lists.isEmpty(products)}" class="text-center py-24 bg-white rounded-2xl border border-dashed border-gray-200 mt-8">
+        <div class="text-6xl mb-4">📦</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">No products available</h3>
+        <p class="text-gray-500">Check back soon!</p>
+    </div>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
